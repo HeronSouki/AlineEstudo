@@ -3,24 +3,16 @@ import React, { useState } from 'react';
 
 export function Tabs({ defaultValue, children }: { defaultValue: string, children: React.ReactNode }) {
   const [value, setValue] = useState(defaultValue);
-  // children are expected as: <TabsList/> + multiple <TabsContent value="..."/>
   return <div data-tabs-value={value}>{React.Children.map(children, (child: any) => {
     if (!child) return null;
-    if (child.type.displayName === 'TabsList') {
-      return React.cloneElement(child, { value, onChange: setValue });
-    }
-    if (child.type.displayName === 'TabsContent') {
-      return value === child.props.value ? child : null;
-    }
+    if (child.type.displayName === 'TabsList') return React.cloneElement(child, { value, onChange: setValue });
+    if (child.type.displayName === 'TabsContent') return value === child.props.value ? child : null;
     return child;
   })}</div>;
 }
 
 export function TabsList({ children, value, onChange }: { children: React.ReactNode, value?: string, onChange?: (v: string)=>void }) {
-  return <div className="tabs-list">{React.Children.map(children, (child: any) => {
-    if (!child) return null;
-    return React.cloneElement(child, { activeValue: value, onChange });
-  })}</div>;
+  return <div className="tabs-list">{React.Children.map(children, (child: any) => React.cloneElement(child, { activeValue: value, onChange }))}</div>;
 }
 TabsList.displayName = 'TabsList';
 
@@ -31,7 +23,7 @@ export function TabsTrigger({ children, value, activeValue, onChange }:
 }
 TabsTrigger.displayName = 'TabsTrigger';
 
-export function TabsContent({ children }: { children: React.ReactNode }) {
-  return <div className="mt-4">{children}</div>;
+export function TabsContent({ children, value }: { children: React.ReactNode, value: string }) {
+  return <div className="mt-4" data-value={value}>{children}</div>;
 }
 TabsContent.displayName = 'TabsContent';
